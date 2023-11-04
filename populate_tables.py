@@ -1,24 +1,48 @@
-# populate_tables.py
-
 import mysql.connector
+from mysql.connector import Error
 
 from database_config import config
 
-add_employee = ("INSERT INTO employees "
-                "(name, position) "
-                "VALUES (%s, %s)")
 
-data_employee = ('John Doe', 'Server')
+def insert_employee(employee_data):
+    """
+    Inserts a new employee into the database.
+    :param employee_data: A tuple containing employee data.
+    """
+    try:
+        # SQL query to add an employee
+        add_employee_query = (
+            "INSERT INTO employees (name, position) "
+            "VALUES (%s, %s)"
+        )
 
-cnx = mysql.connector.connect(**config)
-cursor = cnx.cursor()
+        # Establish a new connection to the database
+        connection = mysql.connector.connect(**config)
+        cursor = connection.cursor()
 
-# Insert new employee
-cursor.execute(add_employee, data_employee)
-employee_id = cursor.lastrowid
+        # Execute the SQL command to insert a new employee
+        cursor.execute(add_employee_query, employee_data)
 
-# Make sure data is committed to the database
-cnx.commit()
+        # Commit the transaction to save the new employee record
+        connection.commit()
+        
+        # Obtain the ID of the newly inserted employee
+        employee_id = cursor.lastrowid
+        print(f"Inserted employee with ID: {employee_id}")
 
-cursor.close()
-cnx.close()
+    except Error as e:
+        print(f"Error: {e}")
+    
+    finally:
+        # Close the cursor and the connection
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed.")
+
+# Data tuple for the new employee
+new_employee = ('John Doe', 'Server')
+
+# Call the function to insert a new employee
+insert_employee(new_employee)
+
