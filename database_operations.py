@@ -20,7 +20,7 @@ def run_stored_procedure(procedure_name, parameters=None):
         cnx.close()
     return result
 
-# Example usage:
-# results = run_stored_procedure('GetEmployeeList')
-# for result in results:
-#     print(result)
+
+def total_sales_by_employee():
+    return run_stored_procedure('TotalSalesByEmployee')
+
